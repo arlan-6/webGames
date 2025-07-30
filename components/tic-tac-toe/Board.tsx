@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useEffect, useState, useMemo, useCallback } from "react";
+import React, { FC, useEffect, useState,  useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { BrushCleaning, Circle, SquareDashed, X } from "lucide-react";
 import {
@@ -117,10 +117,10 @@ export const Board: FC<BoardProps> = ({ className }) => {
     };
 
     // No specific logic needed for handleDragOver in this simple case
-    const handleDragOver = (event: DragOverEvent) => {
+    // const handleDragOver = (event: DragOverEvent) => {
         // For debugging, if needed:
         // console.log("Drag over event:", event.active.id, "Over:", event.over?.id);
-    };
+    // };
 
     const handleResetGame = () => {
         setBoard(Array(9).fill(""));
@@ -156,14 +156,14 @@ export const Board: FC<BoardProps> = ({ className }) => {
                     console.log("Drag cancelled");
                     setActiveId(null);
                 }}
-                onDragOver={handleDragOver}
+                // onDragOver={handleDragOver}
             >
                 {/* Game Info and Reset Button */}
                 <div className="mb-6 text-xl font-bold flex items-center gap-4">
                     {winner ? (
                         <span className="text-green-600 text-5xl">{winner} wins!</span>
                     ) : isDraw ? (
-                        <span className="text-yellow-600">It's a Draw!</span>
+                        <span className="text-yellow-600">It is a Draw!</span>
                     ) : (
                         <span>Current Player: {currentPlayer}</span>
                     )}
@@ -179,7 +179,7 @@ export const Board: FC<BoardProps> = ({ className }) => {
                 {/* Draggable Pieces (X and O) */}
                 <div className="flex gap-8 mb-8">
                     <div className="flex flex-col items-center">
-                        <span className="text-lg font-semibold mb-2">X's Turn</span>
+                        <span className="text-lg font-semibold mb-2">X s Turn</span>
                         {/* Only render Draggable if it's X's turn and X is not currently being dragged */}
                         {currentPlayer === "X" && !winner && !isDraw ? (
                             <Draggable
@@ -195,7 +195,7 @@ export const Board: FC<BoardProps> = ({ className }) => {
                         )}
                     </div>
                     <div className="flex flex-col items-center">
-                        <span className="text-lg font-semibold mb-2">O's Turn</span>
+                        <span className="text-lg font-semibold mb-2">O s Turn</span>
                         {/* Only render Draggable if it's O's turn and O is not currently being dragged */}
                         {currentPlayer === "O" && !winner && !isDraw ? (
                             <Draggable

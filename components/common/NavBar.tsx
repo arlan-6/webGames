@@ -2,13 +2,9 @@ import React, { FC } from 'react'
 import { cn } from '@/lib/utils'
 import {
   NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
-  NavigationMenuViewport,
 } from "@/components/ui/navigation-menu"
 import Link from 'next/link'
 interface NavBarProps {
