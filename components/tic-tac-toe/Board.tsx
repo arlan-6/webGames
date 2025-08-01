@@ -91,7 +91,7 @@ const mouseSensor = useSensor(MouseSensor);
 			return e === "";
 		}).length;
 
-		const pickMove = Math.round(Math.random() * freeSpaces) + 1;
+		const pickMove = Math.floor(Math.random() * freeSpaces) + 1;
 
 		let c = 0;
 		const newBoard = board.map((e) => {
@@ -129,8 +129,8 @@ const mouseSensor = useSensor(MouseSensor);
 		const freeSpaces = board.filter((e) => {
 			return e === "";
 		}).length;
+const pickMove = Math.floor(Math.random() * freeSpaces) + 1;
 
-		const pickMove = Math.round(Math.random() * freeSpaces) + 1;
 
 		let c = 0;
 		const newBoard = board.map((e, i) => {
@@ -157,6 +157,60 @@ const mouseSensor = useSensor(MouseSensor);
 		setBoard(newBoard);
 		console.log("bot2 move");
 	};
+
+	const bot3ToMove = (by: Player) => {
+	const opponent = by === "X" ? "O" : "X";
+
+	const getEmptyIndices = () =>
+		board.map((val, i) => (val === "" ? i : null)).filter((i) => i !== null);
+
+	// 1. Try to WIN
+	for (const line of WIN_CONDITIONS) {
+		const values = line.map((i) => board[i]);
+		const botCount = values.filter((v) => v === by).length;
+		const empty = line.find((i) => board[i] === "");
+		if (botCount === 2 && empty !== undefined) {
+			const newBoard = [...board];
+			newBoard[empty] = by;
+			setBoard(newBoard);
+			return;
+		}
+	}
+
+	// 2. Try to BLOCK opponent's win
+	for (const line of WIN_CONDITIONS) {
+		const values = line.map((i) => board[i]);
+		const opponentCount = values.filter((v) => v === opponent).length;
+		const empty = line.find((i) => board[i] === "");
+		if (opponentCount === 2 && empty !== undefined) {
+			const newBoard = [...board];
+			newBoard[empty] = by;
+			setBoard(newBoard);
+			return;
+		}
+	}
+
+	// 3. Pick Center > Corners > Edges
+	const priorities = [4, 0, 2, 6, 8, 1, 3, 5, 7];
+	for (const index of priorities) {
+		if (board[index] === "") {
+			const newBoard = [...board];
+			newBoard[index] = by;
+			setBoard(newBoard);
+			return;
+		}
+	}
+
+	// 4. Fallback Random
+	const emptyIndices = getEmptyIndices();
+	if (emptyIndices.length > 0) {
+		const pick = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+		const newBoard = [...board];
+		newBoard[pick] = by;
+		setBoard(newBoard);
+	}
+};
+
 	// Memoize the checkWinner function to avoid re-creating on every render
 	const checkWinner = useCallback(
 		(currentBoard: CellValue[]): Player | null => {
@@ -211,6 +265,9 @@ const mouseSensor = useSensor(MouseSensor);
 					setCurrentPlayer(botIs === "X" ? "O" : "X");
 				} else if (botLevel === 2) {
 					bot2ToMove(botIs);
+					setCurrentPlayer(botIs === "X" ? "O" : "X");
+				} else if (botLevel === 3) {
+					bot3ToMove(botIs);
 					setCurrentPlayer(botIs === "X" ? "O" : "X");
 				}
 			}
