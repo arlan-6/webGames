@@ -5,7 +5,6 @@ import {  Circle, RefreshCw, SquareDashed, X } from "lucide-react";
 import {
 	DndContext,
 	DragEndEvent,
-	DragOverEvent,
 	DragStartEvent,
 	DragOverlay,
 } from "@dnd-kit/core";
@@ -46,7 +45,12 @@ export const Board: FC<BoardProps> = ({ className }) => {
 	const [botIs, setBotIs] = useState<Player>("O"); // State to track bot player
 	// Dnd-kit state
 	const [activeId, setActiveId] = useState<string | number | null>(null);
+const [isClient, setIsClient] = useState(false);
 
+    useEffect(() => {
+        // Set a flag to indicate the component is running on the client
+        setIsClient(true);
+    }, []);
 	// --- Game Logic ---
 
 	const onIsBotEnabledChange = (value: boolean) => {
@@ -437,10 +441,11 @@ export const Board: FC<BoardProps> = ({ className }) => {
 				</div>
 
 				{/* DragOverlay for smooth dragging experience */}
-				{createPortal(
-					<DragOverlay>{renderDragOverlayContent()}</DragOverlay>,
-					document.body,
-				)}
+				 {isClient &&
+                createPortal(
+                    <DragOverlay>{renderDragOverlayContent()}</DragOverlay>,
+                    document.body
+                )}
 			</DndContext>
 		</div>
 	);
