@@ -7,6 +7,11 @@ import {
 	DragEndEvent,
 	DragStartEvent,
 	DragOverlay,
+	useSensor,
+	MouseSensor,
+	TouchSensor,
+	KeyboardSensor,
+	useSensors,
 } from "@dnd-kit/core";
 import { Draggable } from "./Draggable"; // Assuming Draggable.tsx is in the same directory
 import { Droppable } from "./Droppable"; // Assuming Droppable.tsx is in the same directory
@@ -62,7 +67,15 @@ const [isClient, setIsClient] = useState(false);
 		setWinner(null);
 		setIsDraw(false);
 	};
-
+const mouseSensor = useSensor(MouseSensor);
+  const touchSensor = useSensor(TouchSensor);
+  const keyboardSensor = useSensor(KeyboardSensor);
+  
+  const sensors = useSensors(
+    mouseSensor,
+    touchSensor,
+    keyboardSensor,
+  );
 	const levelSelectHandler = (value: number) => {
 		setBotLevel(value);
 		setBoard(Array(9).fill("")); // Reset the board when changing bot level
@@ -300,11 +313,11 @@ const [isClient, setIsClient] = useState(false);
 
 	return (
 		<div className={cn("w-full p-10 flex flex-col items-center", className)}>
-			<div className="flex gap-4 ">
+			<div className="flex gap-4 md:flex-row flex-col">
 				{isBotEnabled && (
 					<LevelSelector
 						disabled
-						className="opacity-0 "
+						className="opacity-0 hide md:block"
 						value={botLevel.toString()}
 						onChange={setBotLevel}
 					/>
@@ -322,6 +335,7 @@ const [isClient, setIsClient] = useState(false);
 				)}
 			</div>
 			<DndContext
+			 sensors={sensors}
 				onDragStart={handleDragStart}
 				onDragEnd={handleDragEnd}
 				onDragCancel={() => {
@@ -401,7 +415,7 @@ const [isClient, setIsClient] = useState(false);
 				</div>
 
 				{/* Tic-Tac-Toe Board Grid */}
-				<div className="flex flex-wrap border-2 border-dashed border-gray-400 rounded-lg overflow-hidden w-[28rem] h-[28rem]">
+				<div className="flex flex-wrap border-2 border-dashed border-gray-400 rounded-lg overflow-hidden w-[20rem] h-[20rem] md:w-[28rem] md:h-[28rem]">
 					{" "}
 					{/* Fixed width for better layout */}
 					{Array.from({ length: 9 }).map((_, i) => (
@@ -415,15 +429,15 @@ const [isClient, setIsClient] = useState(false);
 									<X
 										strokeWidth={4}
 										color="#007595"
-										size={72}
-										className="animate-in zoom-in-50 duration-300" // Apply animation here
+										size={60}
+										className="animate-in zoom-in-50 duration-300 scale-100 md:scale-125" // Apply animation here
 									/>
 								) : (
 									<Circle
 										strokeWidth={4}
 										color="#65a30d"
-										size={72}
-										className="animate-in zoom-in-50 duration-300" // Apply animation here
+										size={60}
+										className="animate-in zoom-in-50 duration-300 scale-100 md:scale-125" // Apply animation here
 									/>
 								)
 							) : (
