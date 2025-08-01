@@ -28,3 +28,5 @@ export const Draggable: FC<DraggableProps> = React.memo(({ className, children, 
         </Button>
     );
 });
+
+Draggable.displayName = "Draggable";

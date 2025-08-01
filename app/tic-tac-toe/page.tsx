@@ -1,13 +1,11 @@
-import React, { FC } from "react";
+import React from "react";
 import { cn } from "@/lib/utils";
 import { Board } from "@/components/tic-tac-toe/Board";
 
-interface pageProps {
-	className?: string;
-}
-const Page: FC<pageProps> = ({ className }) => {
+
+const Page = () => {
 	return (
-		<div className={cn("", className)}>
+		<div className={cn("")}>
 			<Board />
 		</div>
 	);

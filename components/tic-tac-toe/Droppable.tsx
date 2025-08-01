@@ -36,4 +36,4 @@ export const Droppable: FC<DroppableProps> = React.memo(
 	},
 );
 
-// Droppable.displayName = "Droppable";
+Droppable.displayName = "Droppable";
