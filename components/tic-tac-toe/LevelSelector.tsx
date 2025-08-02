@@ -51,7 +51,7 @@ function LevelSelector({
 						selectedValue !== "2" && "text-muted-foreground/70"
 					}`}
 				>
-					<Sparkles size={20} strokeWidth={1.5} className="mr-2" />
+					<Sparkles size={20} strokeWidth={1.5} className="mr-2 text-black" />
 					Medium
 					<RadioGroupItem id={`${id}-2`} value="2" className="sr-only" />
 				</label>

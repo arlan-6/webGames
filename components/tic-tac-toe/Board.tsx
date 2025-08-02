@@ -328,7 +328,7 @@ export const Board: FC<BoardProps> = ({ className }) => {
 		setCurrentPlayer("X");
 		setWinner(null);
 		setIsDraw(false);
-		
+
 		setBotIs(Math.random() < 0.5 ? "X" : "O");
 	};
 
@@ -470,6 +470,22 @@ export const Board: FC<BoardProps> = ({ className }) => {
 					{Array.from({ length: 9 }).map((_, i) => (
 						<div
 							key={i}
+							onClick={() => {
+								// Handle click only if the cell is empty and it's the current player's turn
+								if (
+									board[i] === "" && ( 
+									currentPlayer === (botIs === "X" ? "O" : "X") || !isBotEnabled) &&
+									!winner &&
+									!isDraw
+								) {
+									setBoard((prevBoard) => {
+										const newBoard = [...prevBoard];
+										newBoard[i] = currentPlayer;
+										return newBoard;
+									});
+									setCurrentPlayer((prev) => (prev === "X" ? "O" : "X")); // Toggle player
+								}
+							}}
 							className="w-1/3 h-1/3 border border-dashed border-gray-300 flex items-center justify-center p-2"
 						>
 							{board[i] ? (
