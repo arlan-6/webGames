@@ -1,7 +1,7 @@
 "use client";
 import React, { FC, useEffect, useState, useCallback } from "react";
 import { cn } from "@/lib/utils";
-import {  Circle, RefreshCw, SquareDashed, X } from "lucide-react";
+import { Circle, RefreshCw, SquareDashed, X } from "lucide-react";
 import {
 	DndContext,
 	DragEndEvent,
@@ -17,7 +17,7 @@ import { Draggable } from "./Draggable"; // Assuming Draggable.tsx is in the sam
 import { Droppable } from "./Droppable"; // Assuming Droppable.tsx is in the same directory
 import { createPortal } from "react-dom";
 import { Button } from "../ui/button"; // Assuming your button component
-import {  PlayerOrBot } from "./comp-170";
+import { PlayerOrBot } from "./comp-170";
 import LevelSelector from "./LevelSelector";
 
 interface BoardProps {
@@ -50,12 +50,12 @@ export const Board: FC<BoardProps> = ({ className }) => {
 	const [botIs, setBotIs] = useState<Player>("O"); // State to track bot player
 	// Dnd-kit state
 	const [activeId, setActiveId] = useState<string | number | null>(null);
-const [isClient, setIsClient] = useState(false);
+	const [isClient, setIsClient] = useState(false);
 
-    useEffect(() => {
-        // Set a flag to indicate the component is running on the client
-        setIsClient(true);
-    }, []);
+	useEffect(() => {
+		// Set a flag to indicate the component is running on the client
+		setIsClient(true);
+	}, []);
 	// --- Game Logic ---
 
 	const onIsBotEnabledChange = (value: boolean) => {
@@ -67,22 +67,18 @@ const [isClient, setIsClient] = useState(false);
 		setWinner(null);
 		setIsDraw(false);
 	};
-const mouseSensor = useSensor(MouseSensor);
-  const touchSensor = useSensor(TouchSensor);
-  const keyboardSensor = useSensor(KeyboardSensor);
-  
-  const sensors = useSensors(
-    mouseSensor,
-    touchSensor,
-    keyboardSensor,
-  );
+	const mouseSensor = useSensor(MouseSensor);
+	const touchSensor = useSensor(TouchSensor);
+	const keyboardSensor = useSensor(KeyboardSensor);
+
+	const sensors = useSensors(mouseSensor, touchSensor, keyboardSensor);
 	const levelSelectHandler = (value: number) => {
 		setBotLevel(value);
 		setBoard(Array(9).fill("")); // Reset the board when changing bot level
 		setCurrentPlayer("X");
 		setWinner(null);
 		setIsDraw(false);
-        
+
 		setBotIs(Math.random() < 0.5 ? "X" : "O");
 	};
 
@@ -129,8 +125,7 @@ const mouseSensor = useSensor(MouseSensor);
 		const freeSpaces = board.filter((e) => {
 			return e === "";
 		}).length;
-const pickMove = Math.floor(Math.random() * freeSpaces) + 1;
-
+		const pickMove = Math.floor(Math.random() * freeSpaces) + 1;
 
 		let c = 0;
 		const newBoard = board.map((e, i) => {
@@ -159,57 +154,58 @@ const pickMove = Math.floor(Math.random() * freeSpaces) + 1;
 	};
 
 	const bot3ToMove = (by: Player) => {
-	const opponent = by === "X" ? "O" : "X";
+		const opponent = by === "X" ? "O" : "X";
 
-	const getEmptyIndices = () =>
-		board.map((val, i) => (val === "" ? i : null)).filter((i) => i !== null);
+		const getEmptyIndices = () =>
+			board.map((val, i) => (val === "" ? i : null)).filter((i) => i !== null);
 
-	// 1. Try to WIN
-	for (const line of WIN_CONDITIONS) {
-		const values = line.map((i) => board[i]);
-		const botCount = values.filter((v) => v === by).length;
-		const empty = line.find((i) => board[i] === "");
-		if (botCount === 2 && empty !== undefined) {
-			const newBoard = [...board];
-			newBoard[empty] = by;
-			setBoard(newBoard);
-			return;
+		// 1. Try to WIN
+		for (const line of WIN_CONDITIONS) {
+			const values = line.map((i) => board[i]);
+			const botCount = values.filter((v) => v === by).length;
+			const empty = line.find((i) => board[i] === "");
+			if (botCount === 2 && empty !== undefined) {
+				const newBoard = [...board];
+				newBoard[empty] = by;
+				setBoard(newBoard);
+				return;
+			}
 		}
-	}
 
-	// 2. Try to BLOCK opponent's win
-	for (const line of WIN_CONDITIONS) {
-		const values = line.map((i) => board[i]);
-		const opponentCount = values.filter((v) => v === opponent).length;
-		const empty = line.find((i) => board[i] === "");
-		if (opponentCount === 2 && empty !== undefined) {
-			const newBoard = [...board];
-			newBoard[empty] = by;
-			setBoard(newBoard);
-			return;
+		// 2. Try to BLOCK opponent's win
+		for (const line of WIN_CONDITIONS) {
+			const values = line.map((i) => board[i]);
+			const opponentCount = values.filter((v) => v === opponent).length;
+			const empty = line.find((i) => board[i] === "");
+			if (opponentCount === 2 && empty !== undefined) {
+				const newBoard = [...board];
+				newBoard[empty] = by;
+				setBoard(newBoard);
+				return;
+			}
 		}
-	}
 
-	// 3. Pick Center > Corners > Edges
-	const priorities = [4, 0, 2, 6, 8, 1, 3, 5, 7];
-	for (const index of priorities) {
-		if (board[index] === "") {
-			const newBoard = [...board];
-			newBoard[index] = by;
-			setBoard(newBoard);
-			return;
+		// 3. Pick Center > Corners > Edges
+		const priorities = [4, 0, 2, 6, 8, 1, 3, 5, 7];
+		for (const index of priorities) {
+			if (board[index] === "") {
+				const newBoard = [...board];
+				newBoard[index] = by;
+				setBoard(newBoard);
+				return;
+			}
 		}
-	}
 
-	// 4. Fallback Random
-	const emptyIndices = getEmptyIndices();
-	if (emptyIndices.length > 0) {
-		const pick = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
-		const newBoard = [...board];
-		newBoard[pick] = by;
-		setBoard(newBoard);
-	}
-};
+		// 4. Fallback Random
+		const emptyIndices = getEmptyIndices();
+		if (emptyIndices.length > 0) {
+			const pick =
+				emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+			const newBoard = [...board];
+			newBoard[pick] = by;
+			setBoard(newBoard);
+		}
+	};
 
 	// Memoize the checkWinner function to avoid re-creating on every render
 	const checkWinner = useCallback(
@@ -332,6 +328,8 @@ const pickMove = Math.floor(Math.random() * freeSpaces) + 1;
 		setCurrentPlayer("X");
 		setWinner(null);
 		setIsDraw(false);
+		
+		setBotIs(Math.random() < 0.5 ? "X" : "O");
 	};
 
 	// --- Render Logic for DragOverlay ---
@@ -353,9 +351,9 @@ const pickMove = Math.floor(Math.random() * freeSpaces) + 1;
 	};
 
 	const renderBotLevelsOrPlayer = (player: number) => {
-        if (!isBotEnabled) {
-            return <>Player {player}</>;
-        }
+		if (!isBotEnabled) {
+			return <>Player {player}</>;
+		}
 		if (botIs === "X" && player === 1) {
 			return <>Bot {botLevel} lvl</>;
 		} else if (botIs === "O" && player === 2) {
@@ -370,29 +368,23 @@ const pickMove = Math.floor(Math.random() * freeSpaces) + 1;
 
 	return (
 		<div className={cn("w-full p-10 flex flex-col items-center", className)}>
-			<div className="flex gap-4 md:flex-row flex-col">
-				{isBotEnabled && (
-					<LevelSelector
-						disabled
-						className="opacity-0 hide md:block"
-						value={botLevel.toString()}
-						onChange={setBotLevel}
-					/>
-				)}
+			<div className="flex flex-wrap md:gap-4 md:flex-row flex-col">
+				<div className="w-56 h-1"></div>
 				<PlayerOrBot
 					value={isBotEnabled ? "on" : "off"}
 					onChange={onIsBotEnabledChange}
 				/>
-
-				{isBotEnabled && (
-					<LevelSelector
-						value={botLevel.toString()}
-						onChange={levelSelectHandler}
-					/>
-				)}
+				<div className="w-56 h-1 mb-10 ">
+					{isBotEnabled && (
+						<LevelSelector
+							value={botLevel.toString()}
+							onChange={levelSelectHandler}
+						/>
+					)}
+				</div>
 			</div>
 			<DndContext
-			 sensors={sensors}
+				sensors={sensors}
 				onDragStart={handleDragStart}
 				onDragEnd={handleDragEnd}
 				onDragCancel={() => {
@@ -415,7 +407,7 @@ const pickMove = Math.floor(Math.random() * freeSpaces) + 1;
 						onClick={handleResetGame}
 						className="hover:bg-destructive-foreground cursor-pointer"
 					>
-						Again <RefreshCw  strokeWidth={2} className="ml-2" />
+						Again <RefreshCw strokeWidth={2} className="ml-2" />
 					</Button>
 				</div>
 
@@ -512,11 +504,11 @@ const pickMove = Math.floor(Math.random() * freeSpaces) + 1;
 				</div>
 
 				{/* DragOverlay for smooth dragging experience */}
-				 {isClient &&
-                createPortal(
-                    <DragOverlay>{renderDragOverlayContent()}</DragOverlay>,
-                    document.body
-                )}
+				{isClient &&
+					createPortal(
+						<DragOverlay>{renderDragOverlayContent()}</DragOverlay>,
+						document.body,
+					)}
 			</DndContext>
 		</div>
 	);
